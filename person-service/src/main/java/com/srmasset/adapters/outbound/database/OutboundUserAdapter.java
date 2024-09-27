@@ -13,6 +13,6 @@ public class OutboundUserAdapter {
     private OutboundUserRepositoryPort outboundUserRepositoryPort;
 
     public UserDAO findByUsername(String username) {
-        return outboundUserRepositoryPort.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return outboundUserRepositoryPort.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 }

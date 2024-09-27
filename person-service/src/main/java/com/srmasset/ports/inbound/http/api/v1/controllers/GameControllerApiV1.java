@@ -1,5 +1,6 @@
 package com.srmasset.ports.inbound.http.api.v1.controllers;
 
+import com.srmasset.adapters.outbound.database.OutboundGameAdapter;
 import com.srmasset.adapters.outbound.database.OutboundUserAdapter;
 import com.srmasset.adapters.outbound.database.exception.UserNotFoundException;
 import com.srmasset.ports.inbound.http.api.v1.errors.ForbiddenException;
@@ -8,10 +9,7 @@ import com.srmasset.ports.outbound.database.user.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/game")
@@ -19,6 +17,9 @@ public class GameControllerApiV1 {
 
     @Autowired
     private OutboundUserAdapter outboundUserAdapter;
+
+    @Autowired
+    private OutboundGameAdapter outboundGameAdapter;
 
     @PostMapping("/start")
     public void start() {}
@@ -38,17 +39,20 @@ public class GameControllerApiV1 {
     }
 
     @GetMapping("/{gameId}/next_server_move")
-    public void nextServerMove() {
-        verifyOwner();
+    public void nextServerMove(@PathVariable Long gameId) throws ForbiddenException {
+        GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
+        verifyOwner(gameDAO);
     }
 
     @PostMapping("/{gameId}/move")
-    public void move() {
-        verifyOwner();
+    public void move(@PathVariable Long gameId) throws ForbiddenException {
+        GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
+        verifyOwner(gameDAO);
     }
 
     @PostMapping("/{gameId}/end")
-    public void end() {
-        verifyOwner();
+    public void end(@PathVariable Long gameId) throws ForbiddenException {
+        GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
+        verifyOwner(gameDAO);
     }
 }
