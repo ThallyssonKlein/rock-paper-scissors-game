@@ -66,7 +66,7 @@ public class GameControllerApiV1 extends BaseController{
         GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
 
-        return this.inboundGameAdapter.result(gameId, inboundGameResultDTO.getPlayerMovement());
+        return ResponseEntity.ok(this.inboundGameAdapter.result(gameId, inboundGameResultDTO.getPlayerMovement().name()));
     }
 
     @PostMapping("/{gameId}/end")
