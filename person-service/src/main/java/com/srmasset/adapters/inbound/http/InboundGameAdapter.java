@@ -56,6 +56,8 @@ public class InboundGameAdapter {
         outboundGameResultDTO.setServerMove(lastServerMovement.getValue().name());
         outboundGameResultDTO.setResult(result.name());
 
+        this.outboundGameAdapter.defineGameWinner(result == WinnerBO.PLAYER ? serverPlayerId : lastServerMovement.getPlayer().getId());
+
         return outboundGameResultDTO;
     }
 }

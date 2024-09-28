@@ -28,4 +28,8 @@ public class GameDAO {
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private UserDAO owner;
+
+    @ManyToOne
+    @JoinColumn(name = "winner_id", nullable = true)
+    private UserDAO winner;
 }

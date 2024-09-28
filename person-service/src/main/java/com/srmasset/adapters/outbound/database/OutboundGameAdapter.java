@@ -33,4 +33,12 @@ public class OutboundGameAdapter {
         gameDAO.setStatusDAO(StatusDAO.CLOSED);
         outboundGameRepositoryPort.save(gameDAO);
     }
+
+    public void defineGameWinner(Long playerId) {
+        GameDAO gameDAO = findGameById(playerId);
+        UserDAO userDAO = new UserDAO();
+        userDAO.setId(playerId);
+        gameDAO.setWinner(userDAO);
+        outboundGameRepositoryPort.save(gameDAO);
+    }
 }
