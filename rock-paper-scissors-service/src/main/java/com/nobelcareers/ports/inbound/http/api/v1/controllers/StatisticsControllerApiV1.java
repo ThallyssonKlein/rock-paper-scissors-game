@@ -1,6 +1,6 @@
 package com.nobelcareers.ports.inbound.http.api.v1.controllers;
 
-import com.nobelcareers.adapters.inbound.http.InboundStatisticsAdapter;
+import com.nobelcareers.adapters.inbound.http.api.v1.InboundStatisticsAdapter;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundStatisticsDTO;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.ForbiddenException;
 import com.nobelcareers.ports.outbound.database.user.UserDAO;

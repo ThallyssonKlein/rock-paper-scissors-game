@@ -1,4 +1,4 @@
-package com.nobelcareers.adapters.inbound.http;
+package com.nobelcareers.adapters.inbound.http.api.v1;
 
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundStatisticsDTO;

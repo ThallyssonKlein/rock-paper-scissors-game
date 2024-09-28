@@ -1,6 +1,6 @@
 package com.nobelcareers.ports.inbound.http.api.v1.controllers;
 
-import com.nobelcareers.adapters.inbound.http.InboundGameAdapter;
+import com.nobelcareers.adapters.inbound.http.api.v1.InboundGameAdapter;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.InboundGameResultDTO;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundServerMoveDTO;
