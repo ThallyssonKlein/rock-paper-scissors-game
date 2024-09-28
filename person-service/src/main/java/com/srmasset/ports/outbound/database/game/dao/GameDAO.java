@@ -21,7 +21,7 @@ public class GameDAO {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50, name = "next_move")
+    @Column(length = 50, name = "next_move")
     private NextMove nextMove;
 
     @ManyToOne
