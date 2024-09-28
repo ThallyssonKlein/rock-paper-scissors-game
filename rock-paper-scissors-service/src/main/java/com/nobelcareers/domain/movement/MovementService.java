@@ -41,7 +41,7 @@ public class MovementService {
         return hexString.toString();
     }
 
-    public String generateServerMovement(Long playerId, List<MovementBO> movements) {
+    public String generateServerMovement(List<MovementBO> movements) {
         if (!movements.isEmpty()) {
             long paperCount = movements.stream().filter(m -> m.getValue().equals(MovementValueBO.PAPER)).count();
             long rockCount = movements.stream().filter(m -> m.getValue().equals(MovementValueBO.ROCK)).count();

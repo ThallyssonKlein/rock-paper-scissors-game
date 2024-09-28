@@ -46,7 +46,7 @@ public class InboundGameAdapter {
 
         List<MovementBO> movementsFromPlayer = this.outboundMovementAdapter.findAllMovementsFromOnePlayer(playerId);
 
-        String serverMovement = this.movementService.generateServerMovement(playerId, movementsFromPlayer);
+        String serverMovement = this.movementService.generateServerMovement(movementsFromPlayer);
         String salt = this.movementService.generateSalt();
         String hash = this.movementService.generateHash(serverMovement, salt);
 

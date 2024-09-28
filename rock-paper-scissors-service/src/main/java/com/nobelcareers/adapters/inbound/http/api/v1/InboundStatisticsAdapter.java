@@ -19,9 +19,9 @@ public class InboundStatisticsAdapter {
     private StatisticsService statisticsService;
 
     public OutboundStatisticsDTO getStatistics(Long playerId) {
-        List<Object[]> results = outboundGameAdapter.findAllGamesOfAPlayerGroupedByWinner(playerId);
+        List<Object[]> results = this.outboundGameAdapter.findAllGamesOfAPlayerGroupedByWinner(playerId);
 
-        StatisticsBO statisticsBO = statisticsService.calculateStatistics(results, playerId);
+        StatisticsBO statisticsBO = this.statisticsService.calculateStatistics(results, playerId);
 
         return new OutboundStatisticsDTO(statisticsBO.getCountOfGames(), statisticsBO.getCountOfVictories(), statisticsBO.getCountOfDefeats(), statisticsBO.getCountOfDraws());
     }
