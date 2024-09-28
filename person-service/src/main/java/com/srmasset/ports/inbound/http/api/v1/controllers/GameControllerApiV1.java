@@ -2,6 +2,8 @@ package com.srmasset.ports.inbound.http.api.v1.controllers;
 
 import com.srmasset.adapters.inbound.http.InboundGameAdapter;
 import com.srmasset.adapters.outbound.database.OutboundGameAdapter;
+import com.srmasset.ports.inbound.http.api.v1.dto.InboundGameResultDTO;
+import com.srmasset.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundServerMoveDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundStartGameDTO;
 import com.srmasset.ports.inbound.http.api.v1.errors.ForbiddenException;
@@ -12,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/game")
+@Valid
 public class GameControllerApiV1 extends BaseController{
 
     @Autowired
@@ -27,7 +32,7 @@ public class GameControllerApiV1 extends BaseController{
     public ResponseEntity<OutboundStartGameDTO> start() throws ForbiddenException {
         UserDAO user = this.authenticate();
 
-        GameDAO gameDAO = outboundGameAdapter.createGameForUser(user);
+        GameDAO gameDAO = this.outboundGameAdapter.createGameForUser(user);
 
         OutboundStartGameDTO outboundStartGameDTO = new OutboundStartGameDTO();
         outboundStartGameDTO.setGameId(gameDAO.getId());
@@ -45,10 +50,10 @@ public class GameControllerApiV1 extends BaseController{
 
     @GetMapping("/{gameId}/next_server_move")
     public ResponseEntity<OutboundServerMoveDTO> nextServerMove(@PathVariable Long gameId) throws ForbiddenException {
-        GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
+        GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         UserDAO userDAO = verifyOwner(gameDAO);
 
-        String hash = inboundGameAdapter.nextServerMove(gameId, userDAO.getId());
+        String hash = this.inboundGameAdapter.nextServerMove(gameId, userDAO.getId());
 
         OutboundServerMoveDTO outboundServerMoveDTO = new OutboundServerMoveDTO();
         outboundServerMoveDTO.setHash(hash);
@@ -57,17 +62,19 @@ public class GameControllerApiV1 extends BaseController{
     }
 
     @PostMapping("/{gameId}/move")
-    public void move(@PathVariable Long gameId) throws ForbiddenException {
-        GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
+    public ResponseEntity<OutboundGameResultDTO> move(@PathVariable Long gameId, @RequestBody InboundGameResultDTO inboundGameResultDTO) throws ForbiddenException {
+        GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
+
+        return this.inboundGameAdapter.result(gameId, inboundGameResultDTO.getPlayerMovement());
     }
 
     @PostMapping("/{gameId}/end")
     public ResponseEntity<Void> end(@PathVariable Long gameId) throws ForbiddenException {
-        GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
+        GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
 
-        outboundGameAdapter.closeGame(gameId);
+        this.outboundGameAdapter.closeGame(gameId);
 
         return ResponseEntity.noContent().build();
     }

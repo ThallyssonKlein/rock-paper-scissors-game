@@ -42,4 +42,8 @@ public class OutboundMovementAdapter {
         List<MovementDAO> movementDAOList = this.outboundMovementRepositoryPort.findAllMovementsFromOnePlayer(playerId);
         return movementDAOList.stream().map(this::mapMovementDAOToMovementBO).toList();
     }
+
+    public MovementDAO getLastServerMovementByGameId(Long gameId) {
+        return this.outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId);
+    }
 }

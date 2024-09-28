@@ -12,4 +12,7 @@ public interface OutboundMovementRepositoryPort extends JpaRepository<MovementDA
     // findAllMovementsFromOnePlayer
     @Query("SELECT m FROM MovementDAO m WHERE AND m.player.id = ?1")
     List<MovementDAO> findAllMovementsFromOnePlayer(Long playerId);
+
+    @Query("SELECT m FROM MovementDAO m WHERE m.game.id = ?1 ORDER BY m.createdAt DESC LIMIT 1")
+    MovementDAO findLastServerMovementByGameId(Long gameId);
 }

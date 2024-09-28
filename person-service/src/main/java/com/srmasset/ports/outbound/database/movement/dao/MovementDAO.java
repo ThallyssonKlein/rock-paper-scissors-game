@@ -4,6 +4,9 @@ import com.srmasset.ports.outbound.database.game.dao.GameDAO;
 import com.srmasset.ports.outbound.database.user.UserDAO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movement")
@@ -35,4 +38,8 @@ public class MovementDAO {
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private GameDAO game;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
