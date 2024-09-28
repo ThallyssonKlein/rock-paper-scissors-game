@@ -7,6 +7,7 @@ import com.nobelcareers.ports.outbound.database.movement.OutboundMovementReposit
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementDAO;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementValueDAO;
 import com.nobelcareers.ports.outbound.database.user.UserDAO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@Slf4j
 public class OutboundMovementAdapter {
 
     @Autowired
@@ -41,7 +43,10 @@ public class OutboundMovementAdapter {
 
     public List<MovementBO> findAllMovementsFromOnePlayer(Long playerId) {
         List<MovementDAO> movementDAOList = this.outboundMovementRepositoryPort.findAllMovementsFromOnePlayer(playerId);
-        return movementDAOList.stream().map(this::mapMovementDAOToMovementBO).toList();
+        log.info("Movements found for player with id: {}", playerId);
+        List<MovementBO> movementBOS = movementDAOList.stream().map(this::mapMovementDAOToMovementBO).toList();
+        log.info("Movements mapped for player with id: {}", playerId);
+        return movementBOS;
     }
 
     public MovementDAO getLastServerMovementByGameId(Long gameId) {

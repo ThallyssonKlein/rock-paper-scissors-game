@@ -9,7 +9,8 @@ import com.nobelcareers.ports.inbound.http.api.v1.exception.ForbiddenException;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.nobelcareers.ports.outbound.database.game.dao.GameDAO;
 import com.nobelcareers.ports.outbound.database.user.UserDAO;
-import datadog.trace.api.Trace;
+import com.nobelcareers.ports.outbound.observability.MetricCollector;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +20,16 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/game")
 @Valid
+@Slf4j
 public class GameControllerApiV1 extends BaseController {
 
     @Autowired
     private InboundGameAdapter inboundGameAdapter;
 
+    @Autowired
+    private MetricCollector metricCollector;
+
     @PostMapping("/start")
-    @Trace(operationName = "GameControllerApiV1.start")
     public ResponseEntity<OutboundStartGameDTO> start() throws ForbiddenException {
         UserDAO user = this.authenticate();
 
@@ -33,6 +37,9 @@ public class GameControllerApiV1 extends BaseController {
 
         OutboundStartGameDTO outboundStartGameDTO = new OutboundStartGameDTO();
         outboundStartGameDTO.setGameId(gameDAO.getId());
+
+        metricCollector.incrementMetric("game_started");
+        log.info("Game started with id: {} for player {}", gameDAO.getId(), user.getId());
 
         return ResponseEntity.ok(outboundStartGameDTO);
     }
@@ -61,6 +68,9 @@ public class GameControllerApiV1 extends BaseController {
         this.verifyOwner(gameId);
 
         this.outboundGameAdapter.closeGame(gameId);
+
+        metricCollector.incrementMetric("game_ended");
+        log.info("Game ended with id: {}", gameId);
 
         return ResponseEntity.noContent().build();
     }
