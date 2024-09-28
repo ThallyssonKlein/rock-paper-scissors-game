@@ -1,119 +1,48 @@
 package com.nobelcareers.domain.game;
 
-import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
-import com.nobelcareers.domain.game.bo.MovementBO;
 import com.nobelcareers.domain.game.bo.MovementValueBO;
 import com.nobelcareers.domain.game.bo.WinnerBO;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class GameServiceTest {
 
-    @Mock
-    private OutboundMovementAdapter outboundMovementAdapter;
+    private final GameService gameService = new GameService();
 
-    @InjectMocks
-    private GameService gameService;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Test
+    void getWinner_Draw() {
+        assertEquals(WinnerBO.DRAW, gameService.getWinner(MovementValueBO.ROCK, MovementValueBO.ROCK));
+        assertEquals(WinnerBO.DRAW, gameService.getWinner(MovementValueBO.PAPER, MovementValueBO.PAPER));
+        assertEquals(WinnerBO.DRAW, gameService.getWinner(MovementValueBO.SCISSORS, MovementValueBO.SCISSORS));
     }
 
     @Test
-    void generateServerMovement_PlayerHasMorePaper_ServerChoosesScissors() {
-        List<MovementBO> movements = Arrays.asList(
-                new MovementBO(MovementValueBO.PAPER),
-                new MovementBO(MovementValueBO.PAPER),
-                new MovementBO(MovementValueBO.ROCK)
-        );
-        when(outboundMovementAdapter.findAllMovementsFromOnePlayer(1L)).thenReturn(movements);
-
-        String result = gameService.generateServerMovement(1L);
-
-        assertEquals(MovementValueBO.SCISSORS.name(), result);
+    void getWinner_PlayerWinsWithPaperAgainstRock() {
+        assertEquals(WinnerBO.PLAYER, gameService.getWinner(MovementValueBO.PAPER, MovementValueBO.ROCK));
     }
 
     @Test
-    void generateServerMovement_PlayerHasMoreRock_ServerChoosesPaper() {
-        List<MovementBO> movements = Arrays.asList(
-                new MovementBO(MovementValueBO.ROCK),
-                new MovementBO(MovementValueBO.ROCK),
-                new MovementBO(MovementValueBO.SCISSORS)
-        );
-        when(outboundMovementAdapter.findAllMovementsFromOnePlayer(1L)).thenReturn(movements);
-
-        String result = gameService.generateServerMovement(1L);
-
-        assertEquals(MovementValueBO.PAPER.name(), result);
+    void getWinner_PlayerWinsWithRockAgainstScissors() {
+        assertEquals(WinnerBO.PLAYER, gameService.getWinner(MovementValueBO.ROCK, MovementValueBO.SCISSORS));
     }
 
     @Test
-    void generateServerMovement_PlayerHasMoreScissors_ServerChoosesRock() {
-        List<MovementBO> movements = Arrays.asList(
-                new MovementBO(MovementValueBO.SCISSORS),
-                new MovementBO(MovementValueBO.SCISSORS),
-                new MovementBO(MovementValueBO.PAPER)
-        );
-        when(outboundMovementAdapter.findAllMovementsFromOnePlayer(1L)).thenReturn(movements);
-
-        String result = gameService.generateServerMovement(1L);
-
-        assertEquals(MovementValueBO.ROCK.name(), result);
+    void getWinner_PlayerWinsWithScissorsAgainstPaper() {
+        assertEquals(WinnerBO.PLAYER, gameService.getWinner(MovementValueBO.SCISSORS, MovementValueBO.PAPER));
     }
 
     @Test
-    void generateServerMovement_PlayerHasNoMovements_ServerChoosesRandom() {
-        when(outboundMovementAdapter.findAllMovementsFromOnePlayer(1L)).thenReturn(Collections.emptyList());
-
-        String result = gameService.generateServerMovement(1L);
-
-        List<String> possibleResults = Arrays.asList(MovementValueBO.PAPER.name(), MovementValueBO.ROCK.name(), MovementValueBO.SCISSORS.name());
-        assertEquals(true, possibleResults.contains(result));
+    void getWinner_ServerWinsWithRockAgainstScissors() {
+        assertEquals(WinnerBO.SERVER, gameService.getWinner(MovementValueBO.SCISSORS, MovementValueBO.ROCK));
     }
 
     @Test
-    void getWinner_PlayerAndServerSameMove_Draw() {
-        WinnerBO result = gameService.getWinner(MovementValueBO.ROCK, MovementValueBO.ROCK);
-
-        assertEquals(WinnerBO.DRAW, result);
+    void getWinner_ServerWinsWithScissorsAgainstPaper() {
+        assertEquals(WinnerBO.SERVER, gameService.getWinner(MovementValueBO.PAPER, MovementValueBO.SCISSORS));
     }
 
     @Test
-    void getWinner_PlayerPaperServerRock_PlayerWins() {
-        WinnerBO result = gameService.getWinner(MovementValueBO.PAPER, MovementValueBO.ROCK);
-
-        assertEquals(WinnerBO.PLAYER, result);
-    }
-
-    @Test
-    void getWinner_PlayerRockServerScissors_PlayerWins() {
-        WinnerBO result = gameService.getWinner(MovementValueBO.ROCK, MovementValueBO.SCISSORS);
-
-        assertEquals(WinnerBO.PLAYER, result);
-    }
-
-    @Test
-    void getWinner_PlayerScissorsServerPaper_PlayerWins() {
-        WinnerBO result = gameService.getWinner(MovementValueBO.SCISSORS, MovementValueBO.PAPER);
-
-        assertEquals(WinnerBO.PLAYER, result);
-    }
-
-    @Test
-    void getWinner_PlayerRockServerPaper_ServerWins() {
-        WinnerBO result = gameService.getWinner(MovementValueBO.ROCK, MovementValueBO.PAPER);
-
-        assertEquals(WinnerBO.SERVER, result);
+    void getWinner_ServerWinsWithPaperAgainstRock() {
+        assertEquals(WinnerBO.SERVER, gameService.getWinner(MovementValueBO.ROCK, MovementValueBO.PAPER));
     }
 }

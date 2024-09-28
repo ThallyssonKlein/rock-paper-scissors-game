@@ -1,6 +1,8 @@
 package com.nobelcareers.adapters.inbound.http.api.v1;
 
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
+import com.nobelcareers.domain.statistics.StatisticsBO;
+import com.nobelcareers.domain.statistics.StatisticsService;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundStatisticsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,32 +15,14 @@ public class InboundStatisticsAdapter {
     @Autowired
     private OutboundGameAdapter outboundGameAdapter;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     public OutboundStatisticsDTO getStatistics(Long playerId) {
         List<Object[]> results = outboundGameAdapter.findAllGamesOfAPlayerGroupedByWinner(playerId);
 
-        int countOfGames = 0;
-        int countOfVictories = 0;
-        int countOfDefeats = 0;
-        int countOfDraws = 0;
+        StatisticsBO statisticsBO = statisticsService.calculateStatistics(results, playerId);
 
-        for (Object[] result : results) {
-            Long winnerId = (Long) result[0];
-            Long count = (Long) result[1];
-
-            countOfGames += count.intValue();
-
-            if(winnerId == null) {
-                countOfDraws = count.intValue();
-                continue;
-            }
-
-            if (winnerId.equals(playerId)) {
-                countOfVictories += count.intValue();
-            } else {
-                countOfDefeats += count.intValue();
-            }
-        }
-
-        return new OutboundStatisticsDTO(countOfGames, countOfVictories, countOfDefeats, countOfDraws);
+        return new OutboundStatisticsDTO(statisticsBO.getCountOfGames(), statisticsBO.getCountOfVictories(), statisticsBO.getCountOfDefeats(), statisticsBO.getCountOfDraws());
     }
 }

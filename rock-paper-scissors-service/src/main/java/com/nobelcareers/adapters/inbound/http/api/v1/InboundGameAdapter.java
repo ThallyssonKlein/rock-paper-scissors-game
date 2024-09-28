@@ -3,8 +3,10 @@ package com.nobelcareers.adapters.inbound.http.api.v1;
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
 import com.nobelcareers.domain.game.GameService;
+import com.nobelcareers.domain.game.bo.MovementBO;
 import com.nobelcareers.domain.game.bo.MovementValueBO;
 import com.nobelcareers.domain.game.bo.WinnerBO;
+import com.nobelcareers.domain.movement.MovementService;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.ForbiddenException;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.NotFoundException;
@@ -15,11 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class InboundGameAdapter {
 
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private MovementService movementService;
 
     @Autowired
     private OutboundMovementAdapter outboundMovementAdapter;
@@ -37,9 +44,11 @@ public class InboundGameAdapter {
             throw new ForbiddenException("Game closed");
         }
 
-        String serverMovement = this.gameService.generateServerMovement(playerId);
-        String salt = this.gameService.generateSalt();
-        String hash = this.gameService.generateHash(serverMovement, salt);
+        List<MovementBO> movementsFromPlayer = this.outboundMovementAdapter.findAllMovementsFromOnePlayer(playerId);
+
+        String serverMovement = this.movementService.generateServerMovement(playerId, movementsFromPlayer);
+        String salt = this.movementService.generateSalt();
+        String hash = this.movementService.generateHash(serverMovement, salt);
 
         this.outboundMovementAdapter.saveMovement(MovementValueDAO.valueOf(serverMovement), salt, hash, gameId, serverPlayerId);
 
