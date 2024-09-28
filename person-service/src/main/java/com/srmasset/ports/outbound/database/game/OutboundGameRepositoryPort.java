@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface OutboundGameRepositoryPort extends JpaRepository<GameDAO, Long> {
 
-    @Query("SELECT g FROM GameDAO g WHERE g.owner.id = :ownerId and g.statusDAO = 'CLOSED' GROUPED BY g.winner.id")
-    List<GameDAO> findAllGamesOfAPlayerGroupedByWinner(Long ownerId);
+    @Query("SELECT g.winner.id, COUNT(g) FROM GameDAO g WHERE g.owner.id = :ownerId AND g.statusDAO = 'CLOSED' GROUP BY g.winner.id")
+    List<Object[]> findAllGamesOfAPlayerGroupedByWinner(Long ownerId);
 }
-

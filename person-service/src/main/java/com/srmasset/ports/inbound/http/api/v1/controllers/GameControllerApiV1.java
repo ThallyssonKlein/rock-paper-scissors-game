@@ -1,7 +1,6 @@
 package com.srmasset.ports.inbound.http.api.v1.controllers;
 
 import com.srmasset.adapters.inbound.http.InboundGameAdapter;
-import com.srmasset.adapters.outbound.database.OutboundGameAdapter;
 import com.srmasset.ports.inbound.http.api.v1.dto.InboundGameResultDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundServerMoveDTO;
@@ -20,10 +19,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/game")
 @Valid
-public class GameControllerApiV1 extends BaseController{
-
-    @Autowired
-    private OutboundGameAdapter outboundGameAdapter;
+public class GameControllerApiV1 extends BaseController {
 
     @Autowired
     private InboundGameAdapter inboundGameAdapter;
@@ -41,18 +37,9 @@ public class GameControllerApiV1 extends BaseController{
         return ResponseEntity.ok(outboundStartGameDTO);
     }
 
-    private UserDAO verifyOwner(GameDAO gameDAO) throws ForbiddenException {
-        UserDAO user = this.authenticate();
-        if (!gameDAO.getOwner().getId().equals(user.getId())) {
-            throw new ForbiddenException();
-        }
-        return user;
-    }
-
     @GetMapping("/{gameId}/next_server_move")
     public ResponseEntity<OutboundServerMoveDTO> nextServerMove(@PathVariable Long gameId) throws ForbiddenException, NotFoundException {
-        GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
-        UserDAO userDAO = verifyOwner(gameDAO);
+        UserDAO userDAO = this.verifyOwner(gameId);
 
         String hash = this.inboundGameAdapter.nextServerMove(gameId, userDAO.getId());
 
@@ -64,16 +51,14 @@ public class GameControllerApiV1 extends BaseController{
 
     @PostMapping("/{gameId}/move")
     public ResponseEntity<OutboundGameResultDTO> move(@PathVariable Long gameId, @RequestBody InboundGameResultDTO inboundGameResultDTO) throws ForbiddenException, NotFoundException {
-        GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
-        verifyOwner(gameDAO);
+        this.verifyOwner(gameId);
 
         return ResponseEntity.ok(this.inboundGameAdapter.result(gameId, inboundGameResultDTO.getPlayerMovement().name()));
     }
 
     @PostMapping("/{gameId}/end")
     public ResponseEntity<Void> end(@PathVariable Long gameId) throws ForbiddenException, NotFoundException {
-        GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
-        verifyOwner(gameDAO);
+        this.verifyOwner(gameId);
 
         this.outboundGameAdapter.closeGame(gameId);
 

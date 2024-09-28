@@ -45,7 +45,7 @@ public class OutboundGameAdapter {
         outboundGameRepositoryPort.save(gameDAO);
     }
 
-    public List<GameDAO> findAllGamesOfAPlayer(Long playerId) {
+    public List<Object[]> findAllGamesOfAPlayerGroupedByWinner(Long playerId) {
         return outboundGameRepositoryPort.findAllGamesOfAPlayerGroupedByWinner(playerId);
     }
 }
