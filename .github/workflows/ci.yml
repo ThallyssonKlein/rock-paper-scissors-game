@@ -21,10 +21,8 @@ jobs:
         distribution: 'adopt' # ou 'zulu', 'temurin', etc.
         java-version: '17'
 
-    - name: Build with Gradle
-      run: ./rock-paper-scissors-service/gradlew build
-      working-directory: ./rock-paper-scissors-service
+    - name: Build with Maven
+      run: mvn -f ./rock-paper-scissors-service/pom.xml clean install
 
     - name: Run tests
-      run: ./rock-paper-scissors-service/gradlew test
-      working-directory: ./rock-paper-scissors-service
+      run: mvn -f ./rock-paper-scissors-service/pom.xml test
