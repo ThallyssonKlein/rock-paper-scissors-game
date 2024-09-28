@@ -27,3 +27,5 @@ CREATE TABLE game (
 );
 
 INSERT INTO user (name, password) VALUES ('server_player', 'secure_password');
+
+INSERT INTO user (name, password) VALUES ('test_player', 'secure_password');
