@@ -27,4 +27,10 @@ public class OutboundGameAdapter {
     public StatusDAO getStatusByGameId(Long gameId) {
         return findGameById(gameId).getStatusDAO();
     }
+
+    public void closeGame(Long gameId) {
+        GameDAO gameDAO = findGameById(gameId);
+        gameDAO.setStatusDAO(StatusDAO.CLOSED);
+        outboundGameRepositoryPort.save(gameDAO);
+    }
 }

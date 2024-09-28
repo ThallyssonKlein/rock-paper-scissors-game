@@ -62,8 +62,12 @@ public class GameControllerApiV1 extends BaseController{
     }
 
     @PostMapping("/{gameId}/end")
-    public void end(@PathVariable Long gameId) throws ForbiddenException {
+    public ResponseEntity<Void> end(@PathVariable Long gameId) throws ForbiddenException {
         GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
+
+        outboundGameAdapter.closeGame(gameId);
+
+        return ResponseEntity.noContent().build();
     }
 }
