@@ -34,7 +34,7 @@ public class OutboundMovementAdapter {
 
     private MovementBO mapMovementDAOToMovementBO(MovementDAO movementDAO) {
         MovementBO movementBO = new MovementBO();
-        movementBO.setValue(MovementValueBO.valueOf(movementBO.getValue().name()));
+        movementBO.setValue(MovementValueBO.valueOf(movementDAO.getValue().name()));
         return movementBO;
     }
 
