@@ -19,22 +19,25 @@ public class InboundStatisticsAdapter {
         int countOfGames = 0;
         int countOfVictories = 0;
         int countOfDefeats = 0;
-        int countOfDraws;
+        int countOfDraws = 0;
 
         for (Object[] result : results) {
             Long winnerId = (Long) result[0];
             Long count = (Long) result[1];
 
             countOfGames += count.intValue();
+
+            if(winnerId == null) {
+                countOfDraws = count.intValue();
+                continue;
+            }
+
             if (winnerId.equals(playerId)) {
                 countOfVictories += count.intValue();
             } else {
                 countOfDefeats += count.intValue();
             }
         }
-
-        // Assuming draws are not included in the query results
-        countOfDraws = countOfGames - (countOfVictories + countOfDefeats);
 
         return new OutboundStatisticsDTO(countOfGames, countOfVictories, countOfDefeats, countOfDraws);
     }
