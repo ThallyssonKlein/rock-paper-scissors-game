@@ -25,6 +25,7 @@ public class OutboundGameAdapter {
     public GameDAO createGameForUser(UserDAO userDAO) {
         GameDAO gameDAO = new GameDAO();
         gameDAO.setOwner(userDAO);
+        gameDAO.setStatusDAO(StatusDAO.OPENED);
         GameDAO gameDAO1 = outboundGameRepositoryPort.save(gameDAO);
         log.info("Game created with id: {} for player {}", gameDAO1.getId(), userDAO.getId());
         return gameDAO1;

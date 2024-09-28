@@ -18,3 +18,80 @@ sudo docker-compose up -d
 ## How to use
 
 ## Starting a game
+
+You need to be authenticated. You can use this test user created by default:
+
+![capture1](docs/capture1.png)
+
+```
+curl --request POST \
+  --url http://localhost:8080/api/v1/game/start \
+  --header 'Authorization: Basic dGVzdF9wbGF5ZXI6c2VjdXJlX3Bhc3N3b3Jk' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/9.3.3' \
+  --cookie JSESSIONID=8DF9D199326BCBE6F3C96914CD384AA6
+```
+
+## Getting the server movement
+
+The frontend must always search for the next move from the server for each move, so that when the user goes to play, they already has the move from the server.
+
+The game needs to be open so you can get the server movement. You need to be authenticated. You need to be the owner of the game.
+
+You will receive the hash, so you can check the server movement later.
+
+![capture3](docs/capture3.png)
+
+```
+curl --request GET \
+  --url http://localhost:8080/api/v1/game/3/next_server_move \
+  --header 'Authorization: Basic dGVzdF9wbGF5ZXI6c2VjdXJlX3Bhc3N3b3Jk' \
+  --header 'User-Agent: insomnia/10.0.0' \
+  --cookie JSESSIONID=8DF9D199326BCBE6F3C96914CD384AA6
+```
+
+# Doing a movement
+
+You need to be authenticated. You need to be the owner of the game. You need to inform one of the following values: ROCK, PAPER, SCISSORS
+
+![capture4](docs/capture4.png)
+
+```
+curl --request POST \
+  --url http://localhost:8080/api/v1/game/3/move \
+  --header 'Authorization: Basic dGVzdF9wbGF5ZXI6c2VjdXJlX3Bhc3N3b3Jk' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/10.0.0' \
+  --cookie JSESSIONID=0449602A5737678E4436BBC4D87B626A \
+  --data '{
+	"playerMovement": "ROCK"
+}'
+```
+
+## Ending a game
+
+You need to be authenticated. You need to be the owner of the game.
+
+![capture2](docs/capture2.png)
+
+```
+curl --request POST \
+  --url http://localhost:8080/api/v1/game/1/end \
+  --header 'Authorization: Basic dGVzdF9wbGF5ZXI6c2VjdXJlX3Bhc3N3b3Jk' \
+  --header 'User-Agent: insomnia/10.0.0' \
+  --cookie JSESSIONID=8DF9D199326BCBE6F3C96914CD384AA6
+```
+
+## Getting the statistics
+
+You need to be authenticated. You need to be the owner of the statistics.
+
+![capture5](docs/capture5.png)
+
+```
+curl --request GET \
+  --url http://localhost:8080/api/v1/statistics/2 \
+  --header 'Authorization: Basic dGVzdF9wbGF5ZXI6c2VjdXJlX3Bhc3N3b3Jk' \
+  --header 'User-Agent: insomnia/10.0.0' \
+  --cookie JSESSIONID=0449602A5737678E4436BBC4D87B626A
+```
