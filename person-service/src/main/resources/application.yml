@@ -36,3 +36,6 @@ datadog:
 
 server:
   port: 8080
+
+game:
+  server_player_id: 1

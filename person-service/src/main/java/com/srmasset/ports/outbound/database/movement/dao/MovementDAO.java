@@ -1,6 +1,7 @@
 package com.srmasset.ports.outbound.database.movement.dao;
 
 import com.srmasset.ports.outbound.database.game.dao.GameDAO;
+import com.srmasset.ports.outbound.database.user.UserDAO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,10 @@ public class MovementDAO {
 
     @Column(nullable = false, name = "hash", length = 64)
     private String hash;
+
+    @ManyToOne
+    @JoinColumn(name = "player_id", nullable = false)
+    private UserDAO player;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)

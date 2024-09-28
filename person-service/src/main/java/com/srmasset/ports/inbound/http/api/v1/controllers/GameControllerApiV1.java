@@ -35,19 +35,20 @@ public class GameControllerApiV1 extends BaseController{
         return ResponseEntity.ok(outboundStartGameDTO);
     }
 
-    private void verifyOwner(GameDAO gameDAO) throws ForbiddenException {
+    private UserDAO verifyOwner(GameDAO gameDAO) throws ForbiddenException {
         UserDAO user = this.authenticate();
         if (!gameDAO.getOwner().getId().equals(user.getId())) {
             throw new ForbiddenException();
         }
+        return user;
     }
 
     @GetMapping("/{gameId}/next_server_move")
     public ResponseEntity<OutboundServerMoveDTO> nextServerMove(@PathVariable Long gameId) throws ForbiddenException {
         GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
-        verifyOwner(gameDAO);
+        UserDAO userDAO = verifyOwner(gameDAO);
 
-        String hash = inboundGameAdapter.nextServerMove(gameId);
+        String hash = inboundGameAdapter.nextServerMove(gameId, userDAO.getId());
 
         OutboundServerMoveDTO outboundServerMoveDTO = new OutboundServerMoveDTO();
         outboundServerMoveDTO.setHash(hash);
