@@ -51,9 +51,9 @@ public class GameControllerApiV1 extends BaseController {
 
     @PostMapping("/{gameId}/move")
     public ResponseEntity<OutboundGameResultDTO> move(@PathVariable Long gameId, @RequestBody InboundGameResultDTO inboundGameResultDTO) throws ForbiddenException, NotFoundException {
-        this.verifyOwner(gameId);
+        UserDAO userDAO = this.verifyOwner(gameId);
 
-        return ResponseEntity.ok(this.inboundGameAdapter.result(gameId, inboundGameResultDTO.getPlayerMovement().name()));
+        return ResponseEntity.ok(this.inboundGameAdapter.result(gameId, inboundGameResultDTO.getPlayerMovement().name(), userDAO.getId()));
     }
 
     @PostMapping("/{gameId}/end")

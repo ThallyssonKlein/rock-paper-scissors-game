@@ -1,2 +1,2 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-  com.srmasset.config.DotenvEnvironmentPostProcessor
+  com.nobelcareers.config.DotenvEnvironmentPostProcessor

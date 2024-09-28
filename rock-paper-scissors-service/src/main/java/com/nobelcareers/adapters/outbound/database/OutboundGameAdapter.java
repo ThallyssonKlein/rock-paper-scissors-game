@@ -1,6 +1,5 @@
 package com.nobelcareers.adapters.outbound.database;
 
-import com.srmasset.adapters.outbound.database.exception.GameNotFoundException;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.nobelcareers.ports.outbound.database.game.OutboundGameRepositoryPort;
 import com.nobelcareers.ports.outbound.database.game.dao.GameDAO;
@@ -27,18 +26,18 @@ public class OutboundGameAdapter {
         return outboundGameRepositoryPort.save(gameDAO);
     }
 
-    public StatusDAO getStatusByGameId(Long gameId) {
-        return findGameById(gameId).getStatusDAO();
+    public StatusDAO getStatusByGameId(Long gameId) throws NotFoundException {
+        return this.findGameById(gameId).getStatusDAO();
     }
 
-    public void closeGame(Long gameId) {
-        GameDAO gameDAO = findGameById(gameId);
+    public void closeGame(Long gameId) throws NotFoundException {
+        GameDAO gameDAO = this.findGameById(gameId);
         gameDAO.setStatusDAO(StatusDAO.CLOSED);
         outboundGameRepositoryPort.save(gameDAO);
     }
 
-    public void defineGameWinner(Long playerId) {
-        GameDAO gameDAO = findGameById(playerId);
+    public void defineGameWinner(Long gameId, Long playerId) throws NotFoundException {
+        GameDAO gameDAO = this.findGameById(gameId);
         UserDAO userDAO = new UserDAO();
         userDAO.setId(playerId);
         gameDAO.setWinner(userDAO);

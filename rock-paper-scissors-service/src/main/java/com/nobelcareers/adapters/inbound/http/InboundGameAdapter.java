@@ -2,12 +2,12 @@ package com.nobelcareers.adapters.inbound.http;
 
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
-import com.srmasset.adapters.outbound.database.exception.GameClosedException;
 import com.nobelcareers.domain.game.GameService;
-import com.nobelcareers.domain.game.MovementValueBO;
-import com.nobelcareers.domain.game.WinnerBO;
+import com.nobelcareers.domain.game.bo.MovementValueBO;
+import com.nobelcareers.domain.game.bo.WinnerBO;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.ForbiddenException;
+import com.nobelcareers.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.nobelcareers.ports.outbound.database.game.dao.StatusDAO;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementDAO;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementValueDAO;
@@ -30,7 +30,7 @@ public class InboundGameAdapter {
     @Value("${game.server_player_id}")
     private Long serverPlayerId;
 
-    public String nextServerMove(Long gameId, Long playerId) throws ForbiddenException {
+    public String nextServerMove(Long gameId, Long playerId) throws ForbiddenException, NotFoundException {
         StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
 
         if (status != StatusDAO.OPENED) {
@@ -46,7 +46,7 @@ public class InboundGameAdapter {
         return hash;
     }
 
-    public OutboundGameResultDTO result(Long gameId, String playerMove) throws ForbiddenException {
+    public OutboundGameResultDTO result(Long gameId, String playerMove, Long playerId) throws ForbiddenException, NotFoundException {
         StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
 
         if (status != StatusDAO.OPENED) {
@@ -65,7 +65,7 @@ public class InboundGameAdapter {
 
         switch(result) {
             case PLAYER:
-                this.outboundGameAdapter.defineGameWinner(gameId, serverPlayerId);
+                this.outboundGameAdapter.defineGameWinner(gameId, playerId);
                 break;
             case SERVER:
                 this.outboundGameAdapter.defineGameWinner(gameId, serverPlayerId);

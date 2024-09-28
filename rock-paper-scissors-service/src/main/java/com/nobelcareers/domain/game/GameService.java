@@ -1,6 +1,9 @@
 package com.nobelcareers.domain.game;
 
 import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
+import com.nobelcareers.domain.game.bo.MovementBO;
+import com.nobelcareers.domain.game.bo.MovementValueBO;
+import com.nobelcareers.domain.game.bo.WinnerBO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +18,13 @@ public class GameService {
     @Autowired
     private OutboundMovementAdapter outboundMovementAdapter;
 
+    private final String[] OPTIONS = {MovementValueBO.PAPER.name(), MovementValueBO.ROCK.name(), MovementValueBO.SCISSORS.name()};
+
+
     public String generateServerMovement(Long playerId) {
         List<MovementBO> movements = outboundMovementAdapter.findAllMovementsFromOnePlayer(playerId);
 
         if (!movements.isEmpty()) {
-            // generate the oposite to the most common movement of the user
             long paperCount = movements.stream().filter(m -> m.getValue().equals(MovementValueBO.PAPER)).count();
             long rockCount = movements.stream().filter(m -> m.getValue().equals(MovementValueBO.ROCK)).count();
             long scissorsCount = movements.stream().filter(m -> m.getValue().equals(MovementValueBO.SCISSORS)).count();
@@ -32,10 +37,7 @@ public class GameService {
                 return MovementValueBO.ROCK.name();
             }
         } else {
-            // generate a random value
-            String[] options = {MovementValueBO.PAPER.name(), MovementValueBO.ROCK.name(), MovementValueBO.SCISSORS.name()};
-            int idx = (int) (Math.random() * options.length);
-            return options[idx];
+            return OPTIONS[(int) (Math.random() * OPTIONS.length)];
         }
     }
 

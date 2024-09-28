@@ -1,7 +1,7 @@
 package com.nobelcareers.adapters.outbound.database;
 
-import com.nobelcareers.domain.game.MovementBO;
-import com.nobelcareers.domain.game.MovementValueBO;
+import com.nobelcareers.domain.game.bo.MovementBO;
+import com.nobelcareers.domain.game.bo.MovementValueBO;
 import com.nobelcareers.ports.outbound.database.game.dao.GameDAO;
 import com.nobelcareers.ports.outbound.database.movement.OutboundMovementRepositoryPort;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementDAO;
