@@ -6,7 +6,8 @@ import com.srmasset.ports.inbound.http.api.v1.dto.InboundGameResultDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundServerMoveDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundStartGameDTO;
-import com.srmasset.ports.inbound.http.api.v1.errors.ForbiddenException;
+import com.srmasset.ports.inbound.http.api.v1.exception.ForbiddenException;
+import com.srmasset.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.srmasset.ports.outbound.database.game.dao.GameDAO;
 import com.srmasset.ports.outbound.database.user.UserDAO;
 import datadog.trace.api.Trace;
@@ -49,7 +50,7 @@ public class GameControllerApiV1 extends BaseController{
     }
 
     @GetMapping("/{gameId}/next_server_move")
-    public ResponseEntity<OutboundServerMoveDTO> nextServerMove(@PathVariable Long gameId) throws ForbiddenException {
+    public ResponseEntity<OutboundServerMoveDTO> nextServerMove(@PathVariable Long gameId) throws ForbiddenException, NotFoundException {
         GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         UserDAO userDAO = verifyOwner(gameDAO);
 
@@ -62,7 +63,7 @@ public class GameControllerApiV1 extends BaseController{
     }
 
     @PostMapping("/{gameId}/move")
-    public ResponseEntity<OutboundGameResultDTO> move(@PathVariable Long gameId, @RequestBody InboundGameResultDTO inboundGameResultDTO) throws ForbiddenException {
+    public ResponseEntity<OutboundGameResultDTO> move(@PathVariable Long gameId, @RequestBody InboundGameResultDTO inboundGameResultDTO) throws ForbiddenException, NotFoundException {
         GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
 
@@ -70,7 +71,7 @@ public class GameControllerApiV1 extends BaseController{
     }
 
     @PostMapping("/{gameId}/end")
-    public ResponseEntity<Void> end(@PathVariable Long gameId) throws ForbiddenException {
+    public ResponseEntity<Void> end(@PathVariable Long gameId) throws ForbiddenException, NotFoundException {
         GameDAO gameDAO = this.outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
 

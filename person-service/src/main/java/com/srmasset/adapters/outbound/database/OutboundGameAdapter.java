@@ -1,6 +1,7 @@
 package com.srmasset.adapters.outbound.database;
 
 import com.srmasset.adapters.outbound.database.exception.GameNotFoundException;
+import com.srmasset.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.srmasset.ports.outbound.database.game.OutboundGameRepositoryPort;
 import com.srmasset.ports.outbound.database.game.dao.GameDAO;
 import com.srmasset.ports.outbound.database.game.dao.StatusDAO;
@@ -8,14 +9,16 @@ import com.srmasset.ports.outbound.database.user.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class OutboundGameAdapter {
 
     @Autowired
     private OutboundGameRepositoryPort outboundGameRepositoryPort;
 
-    public GameDAO findGameById(Long gameId) {
-        return outboundGameRepositoryPort.findById(gameId).orElseThrow(GameNotFoundException::new);
+    public GameDAO findGameById(Long gameId) throws NotFoundException {
+        return outboundGameRepositoryPort.findById(gameId).orElseThrow(() -> new NotFoundException("Game not found"));
     }
 
     public GameDAO createGameForUser(UserDAO userDAO) {
@@ -40,5 +43,9 @@ public class OutboundGameAdapter {
         userDAO.setId(playerId);
         gameDAO.setWinner(userDAO);
         outboundGameRepositoryPort.save(gameDAO);
+    }
+
+    public List<GameDAO> findAllGamesOfAPlayer(Long playerId) {
+        return outboundGameRepositoryPort.findAllGamesOfAPlayerGroupedByWinner(playerId);
     }
 }

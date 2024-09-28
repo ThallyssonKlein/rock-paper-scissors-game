@@ -1,4 +1,4 @@
-package com.srmasset.ports.inbound.http.api.v1.errors;
+package com.srmasset.ports.inbound.http.api.v1.exception;
 
 import lombok.Getter;
 import lombok.Setter;

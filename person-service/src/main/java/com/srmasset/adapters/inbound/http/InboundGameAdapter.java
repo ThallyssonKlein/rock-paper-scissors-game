@@ -7,7 +7,7 @@ import com.srmasset.domain.game.GameService;
 import com.srmasset.domain.game.MovementValueBO;
 import com.srmasset.domain.game.WinnerBO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundGameResultDTO;
-import com.srmasset.ports.outbound.database.game.dao.GameDAO;
+import com.srmasset.ports.inbound.http.api.v1.exception.ForbiddenException;
 import com.srmasset.ports.outbound.database.game.dao.StatusDAO;
 import com.srmasset.ports.outbound.database.movement.dao.MovementDAO;
 import com.srmasset.ports.outbound.database.movement.dao.MovementValueDAO;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class InboundGameAdapter {
+
     @Autowired
     private GameService gameService;
 
@@ -29,11 +30,11 @@ public class InboundGameAdapter {
     @Value("${game.server_player_id}")
     private Long serverPlayerId;
 
-    public String nextServerMove(Long gameId, Long playerId) {
+    public String nextServerMove(Long gameId, Long playerId) throws ForbiddenException {
         StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
 
         if (status != StatusDAO.OPENED) {
-            throw new GameClosedException();
+            throw new ForbiddenException("Game closed");
         }
 
         String serverMovement = this.gameService.generateServerMovement(playerId);
@@ -45,7 +46,13 @@ public class InboundGameAdapter {
         return hash;
     }
 
-    public OutboundGameResultDTO result(Long gameId, String playerMove) {
+    public OutboundGameResultDTO result(Long gameId, String playerMove) throws ForbiddenException {
+        StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
+
+        if (status != StatusDAO.OPENED) {
+            throw new ForbiddenException("Game closed");
+        }
+
         MovementDAO lastServerMovement = this.outboundMovementAdapter.getLastServerMovementByGameId(gameId);
 
         WinnerBO result = this.gameService.getWinner(MovementValueBO.valueOf(playerMove), MovementValueBO.valueOf(lastServerMovement.getValue().name()));
@@ -56,7 +63,17 @@ public class InboundGameAdapter {
         outboundGameResultDTO.setServerMove(lastServerMovement.getValue().name());
         outboundGameResultDTO.setResult(result.name());
 
-        this.outboundGameAdapter.defineGameWinner(result == WinnerBO.PLAYER ? serverPlayerId : lastServerMovement.getPlayer().getId());
+        switch(result) {
+            case PLAYER:
+                this.outboundGameAdapter.defineGameWinner(gameId, serverPlayerId);
+                break;
+            case SERVER:
+                this.outboundGameAdapter.defineGameWinner(gameId, serverPlayerId);
+                break;
+            case DRAW:
+                this.outboundGameAdapter.closeGame(gameId);
+                break;
+        }
 
         return outboundGameResultDTO;
     }

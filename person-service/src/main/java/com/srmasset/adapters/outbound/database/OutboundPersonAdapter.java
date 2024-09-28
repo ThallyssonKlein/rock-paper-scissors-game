@@ -1,12 +1,12 @@
 package com.srmasset.adapters.outbound.database;
 
-import com.srmasset.ports.inbound.http.api.v1.errors.NotFoundException;
+import com.srmasset.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.srmasset.ports.outbound.database.IdentifierType;
 import com.srmasset.domain.person.service.PersonService;
 import com.srmasset.ports.inbound.http.api.v1.dto.InboundPersonDTO;
 import com.srmasset.ports.outbound.database.person.OutboundPersonRepositoryPort;
 import com.srmasset.ports.outbound.database.person.dao.PersonDAO;
-import com.srmasset.ports.inbound.http.api.v1.errors.InternalErrorException;
+import com.srmasset.ports.inbound.http.api.v1.exception.InternalErrorException;
 import com.srmasset.ports.outbound.observability.MetricCollector;
 import datadog.trace.api.Trace;
 import lombok.extern.slf4j.Slf4j;

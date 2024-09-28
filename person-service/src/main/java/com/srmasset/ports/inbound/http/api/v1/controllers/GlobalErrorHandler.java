@@ -1,6 +1,6 @@
 package com.srmasset.ports.inbound.http.api.v1.controllers;
 
-import com.srmasset.ports.inbound.http.api.v1.errors.HttpException;
+import com.srmasset.ports.inbound.http.api.v1.exception.HttpException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
