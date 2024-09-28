@@ -14,6 +14,7 @@ import com.nobelcareers.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.nobelcareers.ports.outbound.database.game.dao.StatusDAO;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementDAO;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementValueDAO;
+import com.nobelcareers.ports.outbound.observability.MetricCollector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -31,6 +32,9 @@ class InboundGameAdapterTest {
 
     @Mock
     private OutboundGameAdapter outboundGameAdapter;
+
+    @Mock
+    private MetricCollector metricCollector;
 
     @InjectMocks
     private InboundGameAdapter inboundGameAdapter;

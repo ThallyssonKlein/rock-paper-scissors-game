@@ -3,7 +3,6 @@ package com.nobelcareers.config;
 import com.nobelcareers.adapters.outbound.database.OutboundUserAdapter;
 import com.nobelcareers.ports.outbound.database.user.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,10 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDAO user = outboundUserAdapter.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        return User.withUsername(user.getUsername())
-            .password(user.getPassword())
-            .roles("USER") // Adjust roles as needed
-            .build();
+        return new CustomUserDetails(user);
     }
 }

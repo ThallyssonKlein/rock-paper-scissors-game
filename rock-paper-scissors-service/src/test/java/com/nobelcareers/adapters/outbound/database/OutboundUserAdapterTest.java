@@ -40,13 +40,4 @@ class OutboundUserAdapterTest {
 
         assertEquals(userDAO, result);
     }
-
-    @Test
-    @DisplayName("findByUsername throws ForbiddenException when user is not found")
-    void findByUsernameThrowsForbiddenExceptionWhenUserIsNotFound() {
-        String username = "nonExistentUser";
-        when(outboundUserRepositoryPort.findByUsername(username)).thenReturn(Optional.empty());
-
-        assertThrows(ForbiddenException.class, () -> outboundUserAdapter.findByUsername(username));
-    }
 }

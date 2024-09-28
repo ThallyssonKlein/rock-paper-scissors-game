@@ -2,6 +2,7 @@ package com.nobelcareers.ports.inbound.http.api.v1.controllers;
 
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundUserAdapter;
+import com.nobelcareers.config.CustomUserDetails;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.ForbiddenException;
 import com.nobelcareers.ports.inbound.http.api.v1.exception.NotFoundException;
 import com.nobelcareers.ports.outbound.database.game.dao.GameDAO;
@@ -9,7 +10,6 @@ import com.nobelcareers.ports.outbound.database.user.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public abstract class BaseController {
 
@@ -25,12 +25,8 @@ public abstract class BaseController {
             throw new ForbiddenException();
         }
 
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        UserDAO user = new UserDAO();
-        user.setUsername(userDetails.getUsername());
-        user.setPassword(userDetails.getPassword());
-
-        return user;
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        return userDetails.getUserDAO();
     }
 
     protected UserDAO verifyOwner(Long gameId) throws ForbiddenException, NotFoundException {
