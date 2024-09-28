@@ -64,6 +64,10 @@ public class InboundGameAdapter {
 
         MovementDAO lastServerMovement = this.outboundMovementAdapter.getLastServerMovementByGameId(gameId);
 
+        if (lastServerMovement == null) {
+            throw new NotFoundException("Server movement not found");
+        }
+
         WinnerBO result = this.gameService.getWinner(MovementValueBO.valueOf(playerMove), MovementValueBO.valueOf(lastServerMovement.getValue().name()));
 
         OutboundGameResultDTO outboundGameResultDTO = new OutboundGameResultDTO();

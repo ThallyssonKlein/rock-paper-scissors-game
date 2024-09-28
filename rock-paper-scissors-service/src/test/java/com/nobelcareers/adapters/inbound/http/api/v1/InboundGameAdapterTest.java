@@ -110,4 +110,16 @@ class InboundGameAdapterTest {
 
         assertThrows(ForbiddenException.class, () -> inboundGameAdapter.result(gameId, playerMove, playerId));
     }
+
+    @Test
+    void result_ServerMovementNotFound() throws NotFoundException {
+        Long gameId = 1L;
+        String playerMove = "ROCK";
+        Long playerId = 2L;
+
+        when(outboundGameAdapter.getStatusByGameId(gameId)).thenReturn(StatusDAO.OPENED);
+        when(outboundMovementAdapter.getLastServerMovementByGameId(gameId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> inboundGameAdapter.result(gameId, playerMove, playerId));
+    }
 }

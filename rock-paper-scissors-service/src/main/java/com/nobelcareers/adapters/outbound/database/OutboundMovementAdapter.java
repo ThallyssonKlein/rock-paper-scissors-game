@@ -8,6 +8,7 @@ import com.nobelcareers.ports.outbound.database.movement.dao.MovementDAO;
 import com.nobelcareers.ports.outbound.database.movement.dao.MovementValueDAO;
 import com.nobelcareers.ports.outbound.database.user.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class OutboundMovementAdapter {
     }
 
     public MovementDAO getLastServerMovementByGameId(Long gameId) {
-        return this.outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId);
+        List<MovementDAO> movements = this.outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId, PageRequest.of(0, 1));
+        return movements.isEmpty() ? null : movements.get(0);
     }
 }

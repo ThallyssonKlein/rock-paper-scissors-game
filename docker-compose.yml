@@ -26,17 +26,17 @@ services:
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
     networks:
       - mynetwork
-  rock-paper-scissors-service:
-    build:
-      context: ./rock-paper-scissors-service
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
-      - datadog
-    networks:
-      - mynetwork
+  # rock-paper-scissors-service:
+  #   build:
+  #     context: ./rock-paper-scissors-service
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - mysql
+  #     - datadog
+  #   networks:
+  #     - mynetwork
 
 networks:
   mynetwork:

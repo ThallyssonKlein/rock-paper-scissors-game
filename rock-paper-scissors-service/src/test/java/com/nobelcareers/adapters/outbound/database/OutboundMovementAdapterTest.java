@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -71,22 +72,22 @@ class OutboundMovementAdapterTest {
     void getLastServerMovementByGameId_returnsMovementDAO() {
         Long gameId = 1L;
         MovementDAO movementDAO = new MovementDAO();
-        when(outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId)).thenReturn(movementDAO);
+        when(outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId, PageRequest.of(0, 1))).thenReturn(List.of(movementDAO));
 
         MovementDAO result = outboundMovementAdapter.getLastServerMovementByGameId(gameId);
 
         assertEquals(movementDAO, result);
-        verify(outboundMovementRepositoryPort, times(1)).findLastServerMovementByGameId(gameId);
+        verify(outboundMovementRepositoryPort, times(1)).findLastServerMovementByGameId(gameId, PageRequest.of(0, 1));
     }
 
     @Test
     void getLastServerMovementByGameId_returnsNullWhenNoMovement() {
         Long gameId = 1L;
-        when(outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId)).thenReturn(null);
+        when(outboundMovementRepositoryPort.findLastServerMovementByGameId(gameId, PageRequest.of(0, 1))).thenReturn(Collections.emptyList());
 
         MovementDAO result = outboundMovementAdapter.getLastServerMovementByGameId(gameId);
 
         assertEquals(null, result);
-        verify(outboundMovementRepositoryPort, times(1)).findLastServerMovementByGameId(gameId);
+        verify(outboundMovementRepositoryPort, times(1)).findLastServerMovementByGameId(gameId, PageRequest.of(0, 1));
     }
 }
