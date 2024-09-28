@@ -19,7 +19,13 @@ public class MovementDAO {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 8, name = "value")
-    private MovementValue value;
+    private MovementValueDAO value;
+
+    @Column(nullable = false, name = "salt", length = 32)
+    private String salt;
+
+    @Column(nullable = false, name = "hash", length = 64)
+    private String hash;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)

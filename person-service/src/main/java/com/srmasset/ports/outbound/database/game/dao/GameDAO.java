@@ -1,11 +1,8 @@
 package com.srmasset.ports.outbound.database.game.dao;
 
-import com.srmasset.ports.outbound.database.movement.dao.MovementDAO;
 import com.srmasset.ports.outbound.database.user.UserDAO;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity
 @Table(name = "game")
@@ -22,7 +19,11 @@ public class GameDAO {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, name = "next_move")
-    private NextMove nextMove;
+    private NextMoveDAO nextMoveDAO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50, name = "status")
+    private StatusDAO statusDAO;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

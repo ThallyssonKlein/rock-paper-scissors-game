@@ -1,6 +1,8 @@
 package com.srmasset.ports.inbound.http.api.v1.controllers;
 
+import com.srmasset.adapters.inbound.http.InboundGameAdapter;
 import com.srmasset.adapters.outbound.database.OutboundGameAdapter;
+import com.srmasset.ports.inbound.http.api.v1.dto.OutboundServerMoveDTO;
 import com.srmasset.ports.inbound.http.api.v1.dto.OutboundStartGameDTO;
 import com.srmasset.ports.inbound.http.api.v1.errors.ForbiddenException;
 import com.srmasset.ports.outbound.database.game.dao.GameDAO;
@@ -16,6 +18,9 @@ public class GameControllerApiV1 extends BaseController{
 
     @Autowired
     private OutboundGameAdapter outboundGameAdapter;
+
+    @Autowired
+    private InboundGameAdapter inboundGameAdapter;
 
     @PostMapping("/start")
     @Trace(operationName = "GameControllerApiV1.start")
@@ -38,9 +43,16 @@ public class GameControllerApiV1 extends BaseController{
     }
 
     @GetMapping("/{gameId}/next_server_move")
-    public void nextServerMove(@PathVariable Long gameId) throws ForbiddenException {
+    public ResponseEntity<OutboundServerMoveDTO> nextServerMove(@PathVariable Long gameId) throws ForbiddenException {
         GameDAO gameDAO = outboundGameAdapter.findGameById(gameId);
         verifyOwner(gameDAO);
+
+        String hash = inboundGameAdapter.nextServerMove(gameId);
+
+        OutboundServerMoveDTO outboundServerMoveDTO = new OutboundServerMoveDTO();
+        outboundServerMoveDTO.setHash(hash);
+
+        return ResponseEntity.ok(outboundServerMoveDTO);
     }
 
     @PostMapping("/{gameId}/move")
