@@ -36,7 +36,7 @@ class OutboundUserAdapterTest {
         UserDAO userDAO = new UserDAO();
         when(outboundUserRepositoryPort.findByUsername(username)).thenReturn(Optional.of(userDAO));
 
-        UserDAO result = outboundUserAdapter.findByUsername(username);
+        UserDAO result = outboundUserAdapter.findByUsername(username).get();
 
         assertEquals(userDAO, result);
     }

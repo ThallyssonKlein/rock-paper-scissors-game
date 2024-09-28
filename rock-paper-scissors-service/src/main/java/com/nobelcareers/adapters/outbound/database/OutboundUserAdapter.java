@@ -6,13 +6,15 @@ import com.nobelcareers.ports.outbound.database.user.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class OutboundUserAdapter {
 
     @Autowired
     private OutboundUserRepositoryPort outboundUserRepositoryPort;
 
-    public UserDAO findByUsername(String username) throws ForbiddenException {
-        return outboundUserRepositoryPort.findByUsername(username).orElseThrow(() -> new ForbiddenException("User not found"));
+    public Optional<UserDAO> findByUsername(String username) {
+        return outboundUserRepositoryPort.findByUsername(username);
     }
 }

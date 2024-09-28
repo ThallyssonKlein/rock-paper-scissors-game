@@ -8,3 +8,13 @@ The idea is to ensure that nothing communicates with the domain layer without go
 ## Move Verification Mechanism
 
 A mechanism has been implemented in this project where the user receives a hash, and then receives the server's move and the salt. With the salt, they can decrypt the hash and know that the result was fair and the server's move was generated before the server had access to the user's move. Perhaps in the frontend, this could be a question mark symbol that instructs the user to check the results (for the more suspicious users).
+
+## How to run
+
+```
+sudo docker-compose up -d
+```
+
+## How to use
+
+## Starting a game
