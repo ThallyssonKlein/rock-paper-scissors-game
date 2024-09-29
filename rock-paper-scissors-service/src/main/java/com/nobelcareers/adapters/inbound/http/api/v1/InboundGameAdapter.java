@@ -54,17 +54,17 @@ public class InboundGameAdapter {
     public String nextServerMove(Long gameId, Long playerId) throws ForbiddenException, NotFoundException {
         StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
 
+        if (status != StatusDAO.OPENED) {
+            metricCollector.incrementMetric("try_to_get_next_server_move_from_closed_game");
+            log.warn("User {} tried to get next server move from closed game with id: {}", playerId, gameId);
+            throw new ForbiddenException("Game closed");
+        }
+
         String turn = (String) this.outboundRedisAdapter.get(gameId.toString());
         if (turn != null && turn.equals(playerId.toString())) {
             metricCollector.incrementMetric("try_to_get_next_server_move_from_his_turn");
             log.warn("User {} tried to get next server move from his turn in game with id: {}", playerId, gameId);
             throw new ForbiddenException("It is your turn");
-        }
-
-        if (status != StatusDAO.OPENED) {
-            metricCollector.incrementMetric("try_to_get_next_server_move_from_closed_game");
-            log.warn("User {} tried to get next server move from closed game with id: {}", playerId, gameId);
-            throw new ForbiddenException("Game closed");
         }
 
         List<MovementBO> movementsFromPlayer = this.outboundMovementAdapter.findAllMovementsFromOnePlayer(playerId);

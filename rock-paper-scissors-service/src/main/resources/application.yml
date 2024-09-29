@@ -6,7 +6,7 @@ logging:
 
 spring:
   redis:
-    host: localhost
+    host: redis
     port: 6379
   datasource:
     url: jdbc:mysql://mysql:3306/rock_paper_scissors_game?allowPublicKeyRetrieval=true
