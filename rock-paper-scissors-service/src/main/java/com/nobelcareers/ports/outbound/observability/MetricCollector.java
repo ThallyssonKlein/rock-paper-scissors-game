@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 @Component
 public class MetricCollector {
@@ -34,5 +34,25 @@ public class MetricCollector {
 
     public void incrementMetric(String metricName) {
         this.statsDClient.count(metricName, 1);
+    }
+
+    public void incrementMetric(String metricName, Map<String, String> tags) {
+        String[] tagsArray = tags.entrySet().stream()
+                .map(entry -> entry.getKey() + ":" + entry.getValue())
+                .toArray(String[]::new);
+        this.statsDClient.count(metricName, 1, tagsArray);
+    }
+
+    public void incrementMetricWithTags(String metricName, String... tags) {
+        if (tags.length % 2 != 0) {
+            throw new IllegalArgumentException("Odd number of arguments. Please provide key-value pairs.");
+        }
+
+        Map<String, String> tagsMap = new HashMap<>();
+        for (int i = 0; i < tags.length; i += 2) {
+            tagsMap.put(tags[i], tags[i + 1]);
+        }
+
+        incrementMetric(metricName, tagsMap);
     }
 }
