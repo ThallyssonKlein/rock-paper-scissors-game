@@ -1,8 +1,8 @@
 package com.nobelcareers.adapters.inbound.http.api.v1;
 
 import com.nobelcareers.adapters.outbound.database.OutboundResultAdapter;
-import com.nobelcareers.domain.statistics.StatisticsBO;
 import com.nobelcareers.ports.inbound.http.api.v1.dto.OutboundStatisticsDTO;
+import com.nobelcareers.ports.outbound.database.result.ResultValueDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,9 +32,9 @@ class InboundStatisticsAdapterTest {
     void getStatistics_withMultipleResults_returnsCorrectStatistics() {
         Long playerId = 1L;
         List<Object[]> results = List.of(
-                new Object[]{"WIN", 5},
-                new Object[]{"LOSE", 3},
-                new Object[]{"DRAW", 2}
+                new Object[]{ResultValueDAO.WIN, 5},
+                new Object[]{ResultValueDAO.LOSE, 3},
+                new Object[]{ResultValueDAO.DRAW, 2}
         );
         when(outboundResultAdapter.findAllResultsOfAPlayer(playerId)).thenReturn(results);
 
