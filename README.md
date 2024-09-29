@@ -36,7 +36,7 @@ curl --request POST \
 
 The frontend must always search for the next move from the server for each move, so that when the user goes to play, they already has the move from the server.
 
-The game needs to be open so you can get the server movement. You need to be authenticated. You need to be the owner of the game.
+The game needs to be open so you can get the server movement. You need to be authenticated. You need to be the owner of the game. It needs to be the turn of the server.
 
 You will receive the hash, so you can check the server movement later.
 
