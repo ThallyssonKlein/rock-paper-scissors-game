@@ -21,4 +21,8 @@ public class UserDAO {
 
     @Column(nullable = false, length = 50, name = "password")
     private String password;
+
+    public UserDAO(Long id) {
+        this.id = id;
+    }
 }

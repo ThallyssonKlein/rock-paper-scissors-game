@@ -2,6 +2,7 @@ package com.nobelcareers.adapters.inbound.http.api.v1;
 
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
+import com.nobelcareers.adapters.outbound.database.OutboundResultAdapter;
 import com.nobelcareers.domain.game.GameService;
 import com.nobelcareers.domain.game.bo.MovementBO;
 import com.nobelcareers.domain.game.bo.MovementValueBO;
@@ -42,6 +43,9 @@ public class InboundGameAdapter {
 
     @Autowired
     private MetricCollector metricCollector;
+
+    @Autowired
+    private OutboundResultAdapter outboundResultAdapter;
 
     public String nextServerMove(Long gameId, Long playerId) throws ForbiddenException, NotFoundException {
         StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
@@ -93,18 +97,8 @@ public class InboundGameAdapter {
         outboundGameResultDTO.setServerMove(lastServerMovement.getValue().name());
         outboundGameResultDTO.setResult(result.name());
 
-        switch(result) {
-            case PLAYER:
-                this.outboundGameAdapter.defineGameWinner(gameId, playerId);
-                break;
-            case SERVER:
-                this.outboundGameAdapter.defineGameWinner(gameId, serverPlayerId);
-                break;
-            case DRAW:
-                this.outboundGameAdapter.closeGame(gameId);
-                break;
-        }
-        log.info("Game result saved for player with id: {}", playerId);
+        this.outboundResultAdapter.saveResults(result, gameId, playerId);
+        log.info("Result saved for player with id: {}", playerId);
 
         return outboundGameResultDTO;
     }

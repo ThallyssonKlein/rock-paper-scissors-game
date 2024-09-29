@@ -75,38 +75,14 @@ class OutboundGameAdapterTest {
     }
 
     @Test
-    void closeGame_GameExists_UpdatesStatus() throws NotFoundException {
+    void endGame_GameExists_UpdatesStatus() throws NotFoundException {
         Long gameId = 1L;
         GameDAO gameDAO = new GameDAO();
         when(outboundGameRepositoryPort.findById(gameId)).thenReturn(Optional.of(gameDAO));
 
-        outboundGameAdapter.closeGame(gameId);
+        outboundGameAdapter.endGame(gameId);
 
         assertEquals(StatusDAO.CLOSED, gameDAO.getStatusDAO());
         verify(outboundGameRepositoryPort).save(gameDAO);
-    }
-
-    @Test
-    void defineGameWinner_GameExists_UpdatesWinner() throws NotFoundException {
-        Long gameId = 1L;
-        Long playerId = 2L;
-        GameDAO gameDAO = new GameDAO();
-        when(outboundGameRepositoryPort.findById(gameId)).thenReturn(Optional.of(gameDAO));
-
-        outboundGameAdapter.defineGameWinner(gameId, playerId);
-
-        assertEquals(playerId, gameDAO.getWinner().getId());
-        verify(outboundGameRepositoryPort).save(gameDAO);
-    }
-
-    @Test
-    void findAllGamesOfAPlayerGroupedByWinner_ValidPlayerId_ReturnsGames() {
-        Long playerId = 1L;
-        List<Object[]> games = List.of(new Object[][]{new Object[]{"test"}});
-        when(outboundGameRepositoryPort.findAllGamesOfAPlayerGroupedByWinner(playerId)).thenReturn(games);
-
-        List<Object[]> result = outboundGameAdapter.findAllGamesOfAPlayerGroupedByWinner(playerId);
-
-        assertEquals(games, result);
     }
 }

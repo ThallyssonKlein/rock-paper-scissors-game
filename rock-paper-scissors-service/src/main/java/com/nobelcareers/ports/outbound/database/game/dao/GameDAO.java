@@ -29,7 +29,7 @@ public class GameDAO {
     @JoinColumn(name = "owner_id", nullable = false)
     private UserDAO owner;
 
-    @ManyToOne
-    @JoinColumn(name = "winner_id", nullable = true)
-    private UserDAO winner;
+    public GameDAO(Long id) {
+        this.id = id;
+    }
 }

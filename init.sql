@@ -9,9 +9,16 @@ CREATE TABLE game (
     next_move VARCHAR(50),
     status VARCHAR(50),
     owner_id BIGINT NOT NULL,
-    winner_id BIGINT,
-    FOREIGN KEY (owner_id) REFERENCES user (id),
-    FOREIGN KEY (winner_id) REFERENCES user (id)
+    FOREIGN KEY (owner_id) REFERENCES user (id)
+);
+
+CREATE TABLE result (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    result VARCHAR(4) NOT NULL,
+    player_id BIGINT NOT NULL,
+    game_id BIGINT NOT NULL,
+    CONSTRAINT fk_player FOREIGN KEY (player_id) REFERENCES user(id),
+    CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES game(id)
 );
 
 CREATE TABLE movement (
@@ -25,7 +32,6 @@ CREATE TABLE movement (
     FOREIGN KEY (player_id) REFERENCES user (id),
     FOREIGN KEY (game_id) REFERENCES game (id)
 );
-
 
 INSERT INTO user (name, password) VALUES ('server_player', 'secure_password');
 

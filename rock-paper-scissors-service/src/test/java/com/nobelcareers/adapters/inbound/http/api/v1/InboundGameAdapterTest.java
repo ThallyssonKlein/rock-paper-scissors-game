@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
+import com.nobelcareers.adapters.outbound.database.OutboundResultAdapter;
 import com.nobelcareers.domain.game.GameService;
 import com.nobelcareers.domain.game.bo.MovementValueBO;
 import com.nobelcareers.domain.game.bo.WinnerBO;
@@ -36,6 +37,9 @@ class InboundGameAdapterTest {
     @Mock
     private MetricCollector metricCollector;
 
+    @Mock
+    private OutboundResultAdapter outboundResultAdapter;
+
     @InjectMocks
     private InboundGameAdapter inboundGameAdapter;
 
@@ -63,7 +67,7 @@ class InboundGameAdapterTest {
         OutboundGameResultDTO result = inboundGameAdapter.result(gameId, playerMove, playerId);
 
         assertEquals(WinnerBO.PLAYER.name(), result.getResult());
-        verify(outboundGameAdapter).defineGameWinner(gameId, playerId);
+        verify(outboundResultAdapter, times(1)).saveResults(WinnerBO.PLAYER, gameId, playerId);
     }
 
     @Test
@@ -82,7 +86,7 @@ class InboundGameAdapterTest {
         OutboundGameResultDTO result = inboundGameAdapter.result(gameId, playerMove, playerId);
 
         assertEquals(WinnerBO.SERVER.name(), result.getResult());
-        verify(outboundGameAdapter).defineGameWinner(gameId, serverPlayerId);
+        verify(outboundResultAdapter, times(1)).saveResults(WinnerBO.SERVER, gameId, playerId);
     }
 
     @Test
@@ -101,7 +105,7 @@ class InboundGameAdapterTest {
         OutboundGameResultDTO result = inboundGameAdapter.result(gameId, playerMove, playerId);
 
         assertEquals(WinnerBO.DRAW.name(), result.getResult());
-        verify(outboundGameAdapter).closeGame(gameId);
+        verify(outboundResultAdapter, times(1)).saveResults(WinnerBO.DRAW, gameId, playerId);
     }
 
     @Test

@@ -35,21 +35,9 @@ public class OutboundGameAdapter {
         return this.findGameById(gameId).getStatusDAO();
     }
 
-    public void closeGame(Long gameId) throws NotFoundException {
+    public void endGame(Long gameId) throws NotFoundException {
         GameDAO gameDAO = this.findGameById(gameId);
         gameDAO.setStatusDAO(StatusDAO.CLOSED);
         outboundGameRepositoryPort.save(gameDAO);
-    }
-
-    public void defineGameWinner(Long gameId, Long playerId) throws NotFoundException {
-        GameDAO gameDAO = this.findGameById(gameId);
-        UserDAO userDAO = new UserDAO();
-        userDAO.setId(playerId);
-        gameDAO.setWinner(userDAO);
-        outboundGameRepositoryPort.save(gameDAO);
-    }
-
-    public List<Object[]> findAllGamesOfAPlayerGroupedByWinner(Long playerId) {
-        return outboundGameRepositoryPort.findAllGamesOfAPlayerGroupedByWinner(playerId);
     }
 }

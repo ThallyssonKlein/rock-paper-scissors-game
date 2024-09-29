@@ -67,7 +67,7 @@ public class GameControllerApiV1 extends BaseController {
     public ResponseEntity<Void> end(@PathVariable Long gameId) throws ForbiddenException, NotFoundException {
         this.verifyOwner(gameId);
 
-        this.outboundGameAdapter.closeGame(gameId);
+        this.outboundGameAdapter.endGame(gameId);
 
         metricCollector.incrementMetric("game_ended");
         log.info("Game ended with id: {}", gameId);

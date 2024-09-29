@@ -25,9 +25,9 @@ public class MovementService {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             String text = move + ":" + salt;
-            byte[] hashBytes = md.digest(text.getBytes());
+            byte[] hashBytes = md.digest(text.getBytes("UTF-8"));
             return bytesToHex(hashBytes);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | java.io.UnsupportedEncodingException e) {
             throw new RuntimeException("Error generating hash", e);
         }
     }
