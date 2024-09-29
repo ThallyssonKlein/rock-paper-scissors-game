@@ -1,5 +1,6 @@
 package com.nobelcareers.adapters.inbound.http.api.v1;
 
+import com.nobelcareers.adapters.outbound.cache.OutboundRedisAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundGameAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundMovementAdapter;
 import com.nobelcareers.adapters.outbound.database.OutboundResultAdapter;
@@ -47,8 +48,18 @@ public class InboundGameAdapter {
     @Autowired
     private OutboundResultAdapter outboundResultAdapter;
 
+    @Autowired
+    private OutboundRedisAdapter outboundRedisAdapter;
+
     public String nextServerMove(Long gameId, Long playerId) throws ForbiddenException, NotFoundException {
         StatusDAO status = this.outboundGameAdapter.getStatusByGameId(gameId);
+
+        String turn = (String) this.outboundRedisAdapter.get(gameId.toString());
+        if (turn != null && turn.equals(playerId.toString())) {
+            metricCollector.incrementMetric("try_to_get_next_server_move_from_his_turn");
+            log.warn("User {} tried to get next server move from his turn in game with id: {}", playerId, gameId);
+            throw new ForbiddenException("It is your turn");
+        }
 
         if (status != StatusDAO.OPENED) {
             metricCollector.incrementMetric("try_to_get_next_server_move_from_closed_game");
@@ -68,6 +79,9 @@ public class InboundGameAdapter {
         this.outboundMovementAdapter.saveMovement(MovementValueDAO.valueOf(serverMovement), salt, hash, gameId, serverPlayerId);
         log.info("Server movement saved for player with id: {}", playerId);
 
+        this.outboundRedisAdapter.save(gameId.toString(), playerId.toString());
+        log.info("Turn changed to the player with id: {} for game with id: {}", playerId, gameId);
+
         return hash;
     }
 
@@ -80,13 +94,15 @@ public class InboundGameAdapter {
             throw new ForbiddenException("Game closed");
         }
 
-        MovementDAO lastServerMovement = this.outboundMovementAdapter.getLastServerMovementByGameId(gameId);
-        if (lastServerMovement == null) {
-            metricCollector.incrementMetric("try_to_get_result_without_server_movement");
-            log.warn("User {} tried to get result without server movement for game with id: {}", playerId, gameId);
-            throw new NotFoundException("Server movement not found");
+        String theTurn = (String) this.outboundRedisAdapter.get(gameId.toString());
+        if (theTurn == null || !theTurn.equals(playerId.toString())) {
+            metricCollector.incrementMetric("try_to_get_result_from_not_his_turn");
+            log.warn("User {} tried to get result from game with id: {} but it is not his turn", playerId, gameId);
+            throw new ForbiddenException("Not your turn");
         }
-        log.info("Last server movement found for game with id: {}", gameId);
+
+        MovementDAO lastServerMovement = this.outboundMovementAdapter.getLastServerMovementByGameId(gameId);
+        log.info("Last server movement found for player with id: {}", playerId);
 
         WinnerBO result = this.gameService.getWinner(MovementValueBO.valueOf(playerMove), MovementValueBO.valueOf(lastServerMovement.getValue().name()));
         log.info("Result calculated for player with id: {}", playerId);
@@ -99,6 +115,9 @@ public class InboundGameAdapter {
 
         this.outboundResultAdapter.saveResults(result, gameId, playerId);
         log.info("Result saved for player with id: {}", playerId);
+
+        this.outboundRedisAdapter.save(gameId.toString(), serverPlayerId.toString());
+        log.info("Turn changed to the server for game with id: {}", gameId);
 
         return outboundGameResultDTO;
     }

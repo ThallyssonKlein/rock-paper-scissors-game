@@ -24,7 +24,8 @@ public class GlobalErrorHandler {
     @ExceptionHandler(HttpException.class)
     public ResponseEntity<Object> handleHttpException(HttpException ex, WebRequest request) {
         log.warn("HTTP Exception: {}", ex.getMessage());
-        metricCollector.incrementMetricWithTags("http.exception", ex.getMessage(), String.valueOf(ex.getStatus()), ex.getName());
+        metricCollector.incrementMetricWithTags("http.exception",
+                "message:", ex.getMessage(), "status:", String.valueOf(ex.getStatus()), "name:", ex.getName());
         return ResponseEntity
                 .status(ex.getStatus())
                 .body(new ErrorResponse(ex.getMessage(), ex.getClass().getSimpleName(), ex.getStatus()));

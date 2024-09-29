@@ -52,7 +52,7 @@ curl --request GET \
 
 # Doing a movement
 
-You need to be authenticated. You need to be the owner of the game. You need to inform one of the following values: ROCK, PAPER, SCISSORS
+You need to be authenticated. You need to be the owner of the game. You need to inform one of the following values: ROCK, PAPER, SCISSORS. You need to get the server movement before.
 
 ![capture4](docs/capture4.png)
 
@@ -101,3 +101,7 @@ curl --request GET \
 I added a script python in the repository, so you can verify the server movement, with the movement, the hash and the salt.
 
 ![capture6](docs/capture6.png)
+
+# Observability
+
+You can put your datadog api key on the docker-compose.yml to see the application metrics inside the Datadog.

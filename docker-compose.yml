@@ -15,6 +15,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - mynetwork
+
   datadog:
     image: datadog/agent:latest
     environment:
@@ -26,6 +27,7 @@ services:
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
     networks:
       - mynetwork
+
   rock-paper-scissors-service:
     build:
       context: ./rock-paper-scissors-service
@@ -35,11 +37,21 @@ services:
     depends_on:
       - mysql
       - datadog
+      - redis
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis:latest
+    container_name: redis-server
+    ports:
+      - "6379:6379"
     networks:
       - mynetwork
 
 networks:
   mynetwork:
     driver: bridge
+
 volumes:
   mysql-data:
