@@ -84,7 +84,7 @@ curl --request POST \
 
 ## Getting the statistics
 
-You need to be authenticated. You need to be the owner of the statistics.
+You need to be authenticated. You need to be the owner of the statistics. You need to inform the user id in the path parameter.
 
 ![capture5](docs/capture5.png)
 
@@ -95,3 +95,9 @@ curl --request GET \
   --header 'User-Agent: insomnia/10.0.0' \
   --cookie JSESSIONID=0449602A5737678E4436BBC4D87B626A
 ```
+
+## Verifing the hash
+
+I added a script python in the repository, so you can verify the server movement, with the movement, the hash and the salt.
+
+![capture6](docs/capture6.png)
