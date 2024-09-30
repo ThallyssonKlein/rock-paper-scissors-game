@@ -6,8 +6,15 @@ logging:
 
 spring:
   redis:
-    host: redis
+    host: redis  # Nome do serviço Redis no Docker Compose
     port: 6379
+    timeout: 5000ms
+    lettuce:
+      pool:
+        max-wait: 3000ms
+        min-idle: 1
+        max-active: 5
+      shutdown-timeout: 100ms
   datasource:
     url: jdbc:mysql://mysql:3306/rock_paper_scissors_game?allowPublicKeyRetrieval=true
     username: user

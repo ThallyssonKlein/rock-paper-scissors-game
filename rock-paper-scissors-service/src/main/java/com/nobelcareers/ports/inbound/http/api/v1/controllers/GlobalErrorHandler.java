@@ -37,7 +37,7 @@ public class GlobalErrorHandler {
         metricCollector.incrementMetricWithTags("generic.exception", "message:", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(GENERIC_ERROR_MESSAGE, ex.getClass().getSimpleName(), 500));
+                .body(new ErrorResponse(GENERIC_ERROR_MESSAGE, null, 500));
     }
 
     @AllArgsConstructor

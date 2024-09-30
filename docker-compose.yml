@@ -45,7 +45,7 @@ services:
       datadog:
         condition: service_started
       redis:
-        condition: service_started
+        condition: service_healthy  # Espera até que o Redis esteja saudável
     networks:
       - mynetwork
 
@@ -56,6 +56,11 @@ services:
       - "6379:6379"
     networks:
       - mynetwork
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql-data:
