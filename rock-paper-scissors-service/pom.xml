@@ -8,7 +8,7 @@
 		<version>3.2.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.nobelcareers</groupId>
+	<groupId>com.rocketpaperscissors</groupId>
 	<artifactId>rock-paper-scissors-service</artifactId>
 	<version>1.0.0</version>
 	<name>rock-paper-scissors-service</name>
